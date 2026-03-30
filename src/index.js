@@ -1,11 +1,12 @@
-const http = require('http');
-const server = http.createServer((req, res) => { 
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Hello, World!');
-});
+const express = require('express');
+
+const app = express();
 const PORT = 3000;
-server.listen(PORT, () => {
+
+const postRouter = require('./routes/posts.routes.js');
+
+app.use('/api/v1/posts', postRouter);
+
+app.listen(PORT, () => {
   console.log(`Server is attempting to run at http://localhost:${PORT}/`);
 });
-
-       
