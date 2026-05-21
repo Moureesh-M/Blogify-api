@@ -1,8 +1,11 @@
 const express = require('express');
-const postsRouter = require('./posts.routes');
-
 const router = express.Router();
 
-router.use('/posts', postsRouter);
+const postRouter = require('./posts.routes');
+const userRouter = require('./user.routes');
+
+// Delegate routes
+router.use('/posts', postRouter);
+router.use('/users', userRouter);
 
 module.exports = router;

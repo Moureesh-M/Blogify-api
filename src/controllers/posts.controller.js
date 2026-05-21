@@ -1,35 +1,98 @@
-const { sendSuccess } = require('../utils/response.utils');
+const postService = require('../services/posts.service');
 
-function getAllPosts(req, res) {
-  const mockPosts = [
-    {
-      id: '1',
-      title: 'Welcome to Blogify',
-      excerpt: 'A clean API shell for blog content.',
-    },
-    {
-      id: '2',
-      title: 'Second post example',
-      excerpt: 'Structured responses and modular routing.',
-    },
-  ];
+// CREATE
+const createPost = async (req, res) => {
+    try {
+        const post = await postService.createPost(req.body);
+        res.status(201).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
-  return sendSuccess(res, { posts: mockPosts }, 'Posts retrieved successfully');
-}
+// GET ALL
+const getAllPosts = async (req, res) => {
+    try {
+        const posts = await postService.getAllPosts();
+        res.status(200).json({
+            success: true,
+            data: posts
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
-async function getPostById(req, res) {
-  const { postId } = req.params;
+// GET BY ID
+const getPostById = async (req, res) => {
+    try {
+        const post = await postService.getPostById(req.params.id);
 
-  const post = {
-    id: postId,
-    title: `Post ${postId}`,
-    content: 'This is a placeholder blog post representing the controller pattern.',
-  };
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
 
-  return sendSuccess(res, { post }, 'Post retrieved successfully');
-}
+        res.status(200).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// UPDATE
+const updatePost = async (req, res) => {
+    try {
+        const post = await postService.updatePost(req.params.id, req.body);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: post
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+// DELETE
+const deletePost = async (req, res) => {
+    try {
+        const post = await postService.deletePost(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({
+                success: false,
+                message: "Post not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Post deleted successfully"
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
 
 module.exports = {
-  getAllPosts,
-  getPostById,
+    createPost,
+    getAllPosts,
+    getPostById,
+    updatePost,
+    deletePost
 };
